@@ -1,4 +1,4 @@
-# rk3576-demos — NPU Vision Demo Collection for Quectel PI M2 (RK3576)
+﻿# rk3576-demos — NPU Vision Demo Collection for Quectel PI M2 (RK3576)
 
 Two camera-based NPU demos, verified on Quectel PI M2 (RK3576, Debian trixie).
 
@@ -35,7 +35,7 @@ rk3576-demos/
 
 ```bash
 sudo apt-get install -y git
-git clone https://github.com/james-liu_Quectel/rk3576-demos.git
+git clone https://github.com/james-liu18/rk3576-demos.git
 cd rk3576-demos
 
 # ---- fall demo: one-shot setup (Python env / deps / librknnrt) + deploy ----

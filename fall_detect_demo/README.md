@@ -1,4 +1,4 @@
-# 跌倒检测 + 异常声音告警 Demo (RK3576)
+﻿# 跌倒检测 + 异常声音告警 Demo (RK3576)
 
 基于 USB 摄像头 + YOLO-Pose(RKNN/NPU) 的人体跌倒检测，结合麦克风异常声音检测。
 触发事件时：LED 闪烁 + 喇叭警笛告警 + 本地保存 10s 音视频录像，带 Tkinter UI。
@@ -51,7 +51,7 @@ python3 tools/convert.py models/yolov8n-pose.onnx rk3576
 ### 0. 一键部署 (推荐, 板子可联网)
 
 ```bash
-git clone https://github.com/james-liu_Quectel/rk3576-demos.git
+git clone https://github.com/james-liu18/rk3576-demos.git
 sudo bash rk3576-demos/fall_detect_demo/deploy/board_setup.sh
 ```
 

@@ -1,4 +1,4 @@
-# rk3576-demos — Quectel PI M2 (RK3576) NPU 视觉 Demo 合集
+﻿# rk3576-demos — Quectel PI M2 (RK3576) NPU 视觉 Demo 合集
 
 在 Quectel PI M2 (RK3576, Debian trixie) 上实测通过的两个摄像头 NPU demo。
 
@@ -35,7 +35,7 @@ rk3576-demos/
 
 ```bash
 sudo apt-get install -y git
-git clone https://github.com/james-liu_Quectel/rk3576-demos.git
+git clone https://github.com/james-liu18/rk3576-demos.git
 cd rk3576-demos
 
 # ---- fall demo: 一键装 Python 环境/依赖/librknnrt + 部署代码 ----

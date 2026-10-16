@@ -1,4 +1,4 @@
-# style_cam_demo — 摄像头预览 + 风格化特效 + 拍照存储 (RK3576)
+﻿# style_cam_demo — 摄像头预览 + 风格化特效 + 拍照存储 (RK3576)
 
 基于 fall_detect_demo 基线的第二个 demo：USB 摄像头取流预览，实时风格化特效，
 一键拍照保存到本地。**全部特效跑在 NPU 上**（风格迁移 + 人体关键点贴纸），
@@ -68,7 +68,7 @@ cd /opt/style_cam_demo
 
 ```bash
 # 方式 A: git clone (板子可联网)
-git clone https://github.com/james-liu_Quectel/rk3576-demos.git
+git clone https://github.com/james-liu18/rk3576-demos.git
 sudo cp -r rk3576-demos/style_cam_demo /opt/
 sudo chmod +x /opt/style_cam_demo/run.sh
 

@@ -1,4 +1,4 @@
-# style_cam_demo — Camera Preview + Style Effects + Photo Capture (RK3576)
+﻿# style_cam_demo — Camera Preview + Style Effects + Photo Capture (RK3576)
 
 Second demo built on the fall_detect_demo baseline: USB camera streaming preview,
 real-time style effects, one-key photo capture. **All effects run on the NPU**
@@ -70,7 +70,7 @@ Prerequisite: install the Python environment via fall_detect_demo's
 
 ```bash
 # A: git clone (board has internet)
-git clone https://github.com/james-liu_Quectel/rk3576-demos.git
+git clone https://github.com/james-liu18/rk3576-demos.git
 sudo cp -r rk3576-demos/style_cam_demo /opt/
 sudo chmod +x /opt/style_cam_demo/run.sh
 

@@ -1,4 +1,4 @@
-# Fall Detection + Abnormal Sound Alarm Demo (RK3576)
+﻿# Fall Detection + Abnormal Sound Alarm Demo (RK3576)
 
 Human fall detection based on a USB camera + YOLO-Pose (RKNN/NPU), combined with
 microphone-based abnormal sound detection. When an event triggers: LED blinking +
@@ -52,7 +52,7 @@ Copy the generated `models/yolo_pose.rknn` to the board.
 ### 0. One-shot deployment (recommended, board has internet)
 
 ```bash
-git clone https://github.com/james-liu_Quectel/rk3576-demos.git
+git clone https://github.com/james-liu18/rk3576-demos.git
 sudo bash rk3576-demos/fall_detect_demo/deploy/board_setup.sh
 ```
 
