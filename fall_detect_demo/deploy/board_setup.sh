@@ -47,6 +47,15 @@ else
 fi
 echo "[deploy] Python 依赖 OK"
 
+# ---- PySide6 界面 (可选, 安装失败自动回退 Tk) ----
+if "$PY" -c "import PySide6" >/dev/null 2>&1; then
+    echo "[deploy] PySide6 已存在, 跳过"
+else
+    echo "[deploy] 安装 PySide6 (现代深色 UI; 失败则回退 Tk)..."
+    "$PY" -m pip install --no-cache-dir shiboken6 PySide6-Essentials >/dev/null 2>&1 \
+        || echo "[deploy] 警告: PySide6 安装失败, UI 将回退 Tkinter"
+fi
+
 # ---- RKNN 运行时 ----
 LIBSRC=""
 [ -f "$PKG/librknnrt.so" ] && LIBSRC="$PKG/librknnrt.so"
@@ -64,7 +73,7 @@ else
 fi
 
 # ---- 系统工具 ----
-for p in alsa-utils gpiod; do
+for p in alsa-utils gpiod libxcb-cursor0; do
     if ! dpkg -s "$p" >/dev/null 2>&1; then
         echo "[deploy] apt 安装 $p ..."
         apt-get install -y "$p" || echo "[deploy] 警告: $p 安装失败(无网络?), 录音/GPIO 工具不可用"
