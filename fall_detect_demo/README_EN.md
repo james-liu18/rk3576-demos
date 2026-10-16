@@ -1,4 +1,4 @@
-﻿# Fall Detection + Abnormal Sound Alarm Demo (RK3576)
+# Fall Detection + Abnormal Sound Alarm Demo (RK3576)
 
 Human fall detection based on a USB camera + YOLO-Pose (RKNN/NPU), combined with
 microphone-based abnormal sound detection. When an event triggers: LED blinking +
