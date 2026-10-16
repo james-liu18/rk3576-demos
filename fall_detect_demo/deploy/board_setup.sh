@@ -73,10 +73,11 @@ else
 fi
 
 # ---- 系统工具 ----
+# libxcb-cursor0: Qt(xcb) 界面需要; 部分板卡 apt 源没有该包, 缺失时 UI 回退 Tk
 for p in alsa-utils gpiod libxcb-cursor0; do
     if ! dpkg -s "$p" >/dev/null 2>&1; then
         echo "[deploy] apt 安装 $p ..."
-        apt-get install -y "$p" || echo "[deploy] 警告: $p 安装失败(无网络?), 录音/GPIO 工具不可用"
+        apt-get install -y "$p" || echo "[deploy] 警告: $p 安装失败 (无网络或源缺失, 不影响已装功能)"
     fi
 done
 
