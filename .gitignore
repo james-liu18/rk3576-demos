@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+
+# IDE 内部文件
+.trae/
+.vs/
+
+# 运行时产物
+fall_detect_demo/records/*
+!fall_detect_demo/records/.gitkeep
+style_cam_demo/photos/
+
+# 离线部署大包 (板子可联网部署, 无需入库)
+*.tar.gz
+deploy/pkg/

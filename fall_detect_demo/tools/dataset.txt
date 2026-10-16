@@ -1,0 +1,4 @@
+# int8 量化校准图片列表 (每行一张图片的绝对路径, 建议 10~100 张含人的图片)
+# 示例:
+# /home/user/calib_imgs/person_001.jpg
+# /home/user/calib_imgs/person_002.jpg

@@ -1,0 +1,39 @@
+# ============================================================
+# 摄像头预览 + 风格化特效 + 拍照存储 Demo 配置 (RK3576)
+# ============================================================
+
+camera:
+  index: 73               # USB 摄像头 /dev/video 序号 (v4l2-ctl --list-devices 确认)
+  width: 1280
+  height: 720
+  fps: 30
+  fourcc: MJPG            # UVC 摄像头常用 MJPG, 失败可改 YUYV
+
+style:
+  input_size: [192, 192]  # 风格迁移模型输入尺寸 (统一 192, 板端实测比 256 快 ~1.8x)
+  strength: 1.0           # 风格强度: 1.0 全风格, <1 与原画面混合
+  core_mask: 3            # 3=双核 NPU (RK3576), 比 0/1 快 ~10%
+  models:                 # 全 NPU 风格迁移 (文件存在才出现在特效列表; 缺失不影响其他模式)
+    hayao:           {path: models/hayao.rknn, out_range: pm1, size: [160, 160]}    # 宫崎骏风 (CartoonGAN Hayao)
+    oil:             {path: models/oil.rknn, out_range: image255, size: [224, 224]}  # 油画 (zoo rain_princess 原生 224)
+    candy:           {path: models/candy.rknn, out_range: image255}           # 糖果风 (zoo candy)
+    mosaic:          {path: models/mosaic.rknn, out_range: image255}          # 玻璃马赛克 (zoo mosaic)
+    sketch:          {path: models/sketch.rknn, out_range: pm1}               # 素描 (CycleGAN photo2sketch, ngf32 轻量)
+    ukiyoe:          {path: models/ukiyoe.rknn, out_range: pm1}               # 浮世绘 (CycleGAN photo->ukiyoe)
+    ink:             {path: models/ink.rknn, out_range: pm1}                  # 水墨画 (CIPGAN CycleGAN)
+  # out_range: pm1 = 模型输入/输出都是 [-1,1] (AnimeGANv2/CycleGAN)
+  #            image255 = 输出 0~255 图像尺度 (fast-neural-style)
+  # 归一化 (mean/std) 已写进 rknn, 板端直接喂 RGB uint8
+
+sticker:
+  pose_model: models/yolo_pose.rknn   # 复用 fall_detect_demo 的人体关键点模型 (NPU)
+  assets_dir: assets                  # 透明 PNG 贴纸目录 (狗耳/狗鼻; 猪头代码绘制)
+
+save:
+  dir: photos             # 照片保存目录 (相对运行目录)
+  quality: 95             # JPEG 质量
+  save_original: false    # true 时同时保存一张原图 (orig_时间戳.jpg)
+
+ui:
+  enabled: true
+  window_w: 1024

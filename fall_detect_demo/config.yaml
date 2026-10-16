@@ -1,0 +1,77 @@
+# ============================================================
+# 跌倒检测 + 异常声音告警 Demo 配置 (RK3576)
+# ============================================================
+
+camera:
+  index: 73               # USB 摄像头 /dev/video 序号（v4l2-ctl --list-devices 确认 PC Camera=73）
+  width: 1280
+  height: 720
+  fps: 30
+  fourcc: MJPG            # UVC 摄像头常用 MJPG，失败可改 YUYV
+
+model:
+  # 支持 .rknn (NPU) 或 .onnx (CPU 调试)
+  path: models/yolo_pose.rknn
+  input_size: [640, 640]
+  conf_threshold: 0.35    # 人框置信度阈值
+  kpt_threshold: 0.40     # 关键点可见性阈值
+  nms_threshold: 0.45
+  core_mask: 0            # 0=自动; RK3576 单核 NPU, 通常不用改
+
+fall:
+  kpt_visible_ratio: 0.7        # 可信骨骼节点比例门槛: >=70% 节点可见才允许判定跌倒
+  torso_angle_threshold: 55     # 躯干与垂直方向夹角阈值(度)，大于视为"躺倒姿态"
+  aspect_ratio_threshold: 1.05  # 框高/宽 小于此值视为"横向躺倒"
+  min_trigger_frames: 4         # 连续 N 帧判定为跌倒姿态才触发（去抖）
+  recover_frames: 30            # 连续 N 帧恢复正常姿态才解除
+  use_velocity: true            # 启用髋部快速下坠辅助判定
+  velocity_drop_px: 110         # 观察窗内髋部中心下坠像素阈值
+  velocity_window: 5
+  min_person_score: 0.40
+  cooldown_s: 15                # 两次跌倒事件最小间隔
+
+audio:
+  enabled: true
+  device: plughw:1,0            # USB 摄像头麦克风 (默认); 板载 es8389 用 "plughw:0,0"
+  fallback_devices: [plughw:0,0] # 板载麦作备用; 被桌面 pipewire 占用时自动切下一个
+  sample_rate: 16000
+  channels: 1
+  chunk_s: 0.2                  # 每次分析窗口
+  abs_threshold_db: -10         # 绝对 RMS 触发阈值 (dBFS), -20 时正常说话(-14dB左右)即误报, 提到 -10 只留较大声响
+  rel_threshold_db: 15          # 高于自适应底噪多少 dB 触发
+  noise_floor_alpha: 0.02       # 底噪平滑系数
+  min_chunks: 2                 # 连续 N 个窗口超标才算事件（去抖）
+  cooldown_s: 8
+
+alarm:
+  duration_s: 10                # 告警(灯+声音)持续时长
+  led:
+    mode: pwm                   # M2 板载红灯 D0407 = PWM0_CH0, 只能走 PWM sysfs
+                                # 可选: gpiod | sysfs_gpio | sysfs_led | pwm | none
+    chip: 0                     # pwmchipN 编号 (LED=27330000.pwm -> pwmchip0)
+    line: 0                     # pwm 通道号 (gpiod/sysfs 模式下才是 gpio line)
+    period: 200000              # 5kHz; 亮 = duty=period 全占空
+    active_low: false
+    # ---- sysfs_gpio 模式（老内核接口）----
+    # mode: sysfs_gpio
+    # line: 86                  # GPIO 编号 -> /sys/class/gpio/gpio86
+    # active_low: false
+    # ---- sysfs_led 模式（内核已注册的 led, /sys/class/leds/<name>）----
+    # mode: sysfs_led
+    # name: work
+  speaker:
+    mode: aplay                 # aplay | none
+    device: plughw:0,0          # aplay -D 参数 (es8389 + speak_pa_en 功放, 内核自动使能)
+    wav: assets/alarm.wav       # 首次运行自动生成警笛音
+
+record:
+  save_dir: records
+  clip_seconds: 10              # 事件录像总时长
+  pre_seconds: 4                # 事件前回溯秒数（环形缓冲）
+  save_annotated: true          # 保存带骨架标注的画面
+  save_audio: true              # 同时保存 10s 音频 wav
+  fps: 25                       # 录像写入帧率
+
+ui:
+  enabled: true
+  window_w: 1024

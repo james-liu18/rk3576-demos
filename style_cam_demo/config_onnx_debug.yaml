@@ -1,0 +1,11 @@
+camera: {index: 0, width: 1280, height: 720, fps: 30, fourcc: MJPG}
+style:
+  input_size: [256, 256]
+  strength: 1.0
+  models:                     # PC/编译机调试: onnx 走 OpenCV DNN (风格 onnx 不入库, 编译机 /tmp/style_cam_src/models/onnx/)
+    hayao:     {path: models/onnx/cgan160_Hayao.onnx,   out_range: pm1, layout: nchw, size: [160, 160]}
+    sketch:    {path: models/onnx/portrait_sketch.onnx,    out_range: pm1, layout: nhwc}
+    oil:       {path: models/onnx/rain_princess_9.onnx,    out_range: image255, layout: nchw}
+    ink:       {path: models/onnx/ink.onnx,                out_range: pm1, layout: nchw}
+save: {dir: photos, quality: 95, save_original: false}
+ui: {enabled: true, window_w: 1024}
