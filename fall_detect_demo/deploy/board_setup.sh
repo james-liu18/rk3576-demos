@@ -71,10 +71,10 @@ for p in alsa-utils gpiod; do
     fi
 done
 
-# ---- demo 代码 (兼容离线包 demo/ 与 git 仓库 ../fall_detect_demo 两种布局) ----
+# ---- demo 代码 (兼容离线包 demo/ 与 git 仓库 ../ 两种布局) ----
 DEMO_SRC=""
 [ -d "$PKG/demo" ] && DEMO_SRC="$PKG/demo"
-[ -d "$PKG/../fall_detect_demo" ] && DEMO_SRC="$PKG/../fall_detect_demo"
+[ -f "$PKG/../main.py" ] && DEMO_SRC="$PKG/.."
 if [ -n "$DEMO_SRC" ]; then
     mkdir -p /opt/fall_detect_demo
     cp -r "$DEMO_SRC/." /opt/fall_detect_demo/
