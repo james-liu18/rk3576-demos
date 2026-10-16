@@ -9,19 +9,31 @@ PKG="$(cd "$(dirname "$0")" && pwd)"
 PY=/opt/py312/bin/python3.12
 
 # ---- Python 3.12 (离线包优先, 否则在线装) ----
+NEED_PY=1
 if [ -x "$PY" ]; then
-    echo "[deploy] Python 3.12 已存在, 跳过"
-elif [ -f "$PKG"/cpython-3.12-aarch64-install_only.tar.gz ]; then
-    echo "[deploy] 离线安装 Python 3.12 -> /opt/py312 ..."
-    mkdir -p /opt/py312
-    tar -xzf "$PKG"/cpython-3.12-aarch64-install_only.tar.gz -C /opt/py312 --strip-components=1
-else
-    echo "[deploy] 在线安装 Python 3.12 (via uv) -> /opt/py312 ..."
-    if ! command -v uv >/dev/null 2>&1; then
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-        export PATH="$HOME/.local/bin:$PATH"
+    if "$PY" -m pip --version >/dev/null 2>&1; then
+        echo "[deploy] Python 3.12 已存在, 跳过"
+        NEED_PY=0
+    else
+        echo "[deploy] /opt/py312 存在但缺 pip, 重建..."
+        rm -rf /opt/py312
     fi
-    uv venv --python 3.12 /opt/py312
+fi
+if [ "$NEED_PY" = 1 ]; then
+    if [ -f "$PKG"/cpython-3.12-aarch64-install_only.tar.gz ]; then
+        echo "[deploy] 离线安装 Python 3.12 -> /opt/py312 ..."
+        mkdir -p /opt/py312
+        tar -xzf "$PKG"/cpython-3.12-aarch64-install_only.tar.gz -C /opt/py312 --strip-components=1
+    else
+        echo "[deploy] 在线安装 Python 3.12 (via uv) -> /opt/py312 ..."
+        if ! command -v uv >/dev/null 2>&1; then
+            echo "[deploy] 安装 uv -> /usr/local/bin ..."
+            curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR="/usr/local/bin" UV_PYTHON_INSTALL_DIR="/opt/uv/python" sh
+        fi
+        export UV_PYTHON_INSTALL_DIR="/opt/uv/python"
+        # --seed: venv 内装上 pip, 后续 pip 安装依赖才可用
+        uv venv --python 3.12 --seed /opt/py312
+    fi
 fi
 
 # ---- Python 依赖 (离线 wheels 优先, 在线兜底) ----
