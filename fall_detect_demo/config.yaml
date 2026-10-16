@@ -22,7 +22,7 @@ fall:
   kpt_visible_ratio: 0.7        # 可信骨骼节点比例门槛: >=70% 节点可见才允许判定跌倒
   torso_angle_threshold: 55     # 躯干与垂直方向夹角阈值(度)，大于视为"躺倒姿态"
   aspect_ratio_threshold: 1.05  # 框高/宽 小于此值视为"横向躺倒"
-  min_trigger_frames: 4         # 连续 N 帧判定为跌倒姿态才触发（去抖）
+  min_trigger_frames: 15        # 连续 N 帧判定为跌倒姿态才触发（去抖, ~0.9s@62ms/帧）
   recover_frames: 30            # 连续 N 帧恢复正常姿态才解除
   use_velocity: true            # 启用髋部快速下坠辅助判定
   velocity_drop_px: 110         # 观察窗内髋部中心下坠像素阈值
