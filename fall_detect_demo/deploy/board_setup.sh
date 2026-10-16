@@ -81,6 +81,19 @@ for p in alsa-utils gpiod libxcb-cursor0; do
     fi
 done
 
+# apt 源缺 libxcb-cursor0 时, 从 Debian 官方池直接装 deb (Qt 界面必需)
+if ! dpkg -s libxcb-cursor0 >/dev/null 2>&1; then
+    echo "[deploy] 从 Debian 池安装 libxcb-cursor0 ..."
+    BASE=http://deb.debian.org/debian/pool/main/x/xcb-util-cursor
+    F=$(curl -s "$BASE/" | grep -o 'libxcb-cursor0_[^"]*_arm64\.deb' | sort -V | tail -1)
+    if [ -n "$F" ] && curl -sO "$BASE/$F"; then
+        dpkg -i "$F" >/dev/null 2>&1 || echo "[deploy] 警告: libxcb-cursor0 安装失败, UI 回退 Tk"
+        rm -f "/tmp/$F"
+    else
+        echo "[deploy] 警告: libxcb-cursor0 下载失败, UI 回退 Tk"
+    fi
+fi
+
 # ---- demo 代码 (兼容离线包 demo/ 与 git 仓库 ../ 两种布局) ----
 DEMO_SRC=""
 [ -d "$PKG/demo" ] && DEMO_SRC="$PKG/demo"
