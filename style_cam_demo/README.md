@@ -1,4 +1,4 @@
-﻿# style_cam_demo — 摄像头预览 + 风格化特效 + 拍照存储 (RK3576)
+# style_cam_demo — 摄像头预览 + 风格化特效 + 拍照存储 (RK3576)
 
 基于 fall_detect_demo 基线的第二个 demo：USB 摄像头取流预览，实时风格化特效，
 一键拍照保存到本地。**全部特效跑在 NPU 上**（风格迁移 + 人体关键点贴纸），
@@ -44,13 +44,14 @@ style_cam_demo/
 
 ## 使用 (板上)
 
-部署到 /opt/style_cam_demo 后 (见下方部署步骤):
+先按下方部署步骤装好环境（board_setup.sh 会自动装 Python/依赖/PySide6），
+然后在仓库 clone 目录或 /opt/style_cam_demo 运行（run.sh 自动定位所在目录）:
 
 ```bash
-cd /opt/style_cam_demo
-./run.sh                     # 带界面 (特效下拉框切换, 空格/按钮拍照)
-./run.sh --no-ui             # 无界面
-./run.sh --list-styles       # 列出可用特效
+cd style_cam_demo                # 或 /opt/style_cam_demo
+sudo ./run.sh                    # 带界面 (特效下拉框切换, 空格/按钮拍照)
+sudo ./run.sh --no-ui            # 无界面
+sudo ./run.sh --list-styles      # 列出可用特效
 ```
 
 拍照: UI 点"拍照"按钮或按空格 → 全分辨率风格化帧存 `photos/style_时间戳.jpg`。
@@ -64,36 +65,45 @@ cd /opt/style_cam_demo
 ## 部署步骤
 
 前置: 先按 fall_detect_demo 的 `deploy/board_setup.sh` 装好 Python 环境
-(/opt/py312 + 依赖, style_cam 无新依赖)。然后任选其一:
+(/opt/py312 + 依赖 + PySide6, style_cam 无额外依赖)。
 
 ```bash
-# 方式 A: git clone (板子可联网)
 git clone https://github.com/james-liu18/rk3576-demos.git
-sudo cp -r rk3576-demos/style_cam_demo /opt/
-sudo chmod +x /opt/style_cam_demo/run.sh
+cd rk3576-demos
+sudo bash fall_detect_demo/deploy/board_setup.sh
+```
 
-# 方式 B: adb push (Windows)
-adb push style_cam_demo /opt/
-adb shell "chmod +x /opt/style_cam_demo/run.sh"
+然后直接在仓库目录运行（run.sh 自动定位，无需手动复制/chmod）:
+
+```bash
+cd style_cam_demo && sudo ./run.sh
+```
+
+正式部署可复制到 /opt（board_setup.sh 不复制 style_cam，手动一下即可）:
+
+```bash
+sudo cp -r style_cam_demo /opt/
+cd /opt/style_cam_demo && sudo ./run.sh
 ```
 
 验证:
 
 ```bash
-adb shell "cd /opt/style_cam_demo && /opt/py312/bin/python3.12 selftest.py"
+/opt/py312/bin/python3.12 selftest.py
 ```
 
-### PySide6 界面 (可选, 现代深色主题)
+### PySide6 界面
 
-默认 Tk 界面较朴素; 装上 PySide6 后自动切换为 Qt 深色界面
-(特效网格/拍照白闪/缩略图), 未安装时自动回退 Tk, 不影响运行:
+board_setup.sh 已自动安装 PySide6 和 libxcb-cursor0（apt 源缺该包时自动从
+Debian 官方池补装 deb），装好后自动使用 Qt 深色界面（特效网格/拍照白闪/缩略图）。
+手动补装方式（仅供参考）:
 
 ```bash
-adb shell "apt-get install -y libxcb-cursor0"
-adb shell "/opt/py312/bin/python3.12 -m pip install --no-cache-dir \
-    -i https://pypi.org/simple shiboken6 PySide6_Essentials"
+/opt/py312/bin/python3.12 -m pip install --no-cache-dir \
+    -i https://pypi.org/simple shiboken6 PySide6_Essentials
 ```
 
+PySide6 缺失或 Qt 起不来时自动回退 Tk，不影响运行。
 run.sh 已设置 `QT_QPA_PLATFORM=xcb` (root 借用普通用户 XWayland 出窗口)。
 
 ## PC / 编译机调试 (无需板子)

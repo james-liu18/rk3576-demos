@@ -1,7 +1,7 @@
-﻿# 跌倒检测 + 异常声音告警 Demo (RK3576)
+# 跌倒检测 + 异常声音告警 Demo (RK3576)
 
 基于 USB 摄像头 + YOLO-Pose(RKNN/NPU) 的人体跌倒检测，结合麦克风异常声音检测。
-触发事件时：LED 闪烁 + 喇叭警笛告警 + 本地保存 10s 音视频录像，带 Tkinter UI。
+触发事件时：LED 闪烁 + 喇叭警笛告警 + 本地保存 10s 音视频录像，带 PySide6 深色 UI。
 
 ```
 fall_detect_demo/
@@ -13,7 +13,7 @@ fall_detect_demo/
 ├── audio_monitor.py      # arecord 麦克风能量检测 (RMS dBFS + 自适应底噪)
 ├── alarm.py              # LED(gpiod/sysfs/pwm) + aplay 警笛
 ├── event_recorder.py     # 环形缓冲, 事件保存 10s mp4 + wav + events.jsonl
-├── ui.py                 # Tkinter UI (回退 OpenCV 窗口 / 无界面)
+├── ui.py                 # PySide6 深色 UI (回退 Tk / OpenCV 窗口 / 无界面)
 ├── selftest.py           # 离线自测 (不需要摄像头/NPU)
 ├── models/yolo_pose.rknn # 已转好的模型 (fp16, rk3576)
 ├── records/              # 事件录像输出 (运行时生成)
@@ -56,15 +56,22 @@ sudo bash rk3576-demos/fall_detect_demo/deploy/board_setup.sh
 ```
 
 脚本幂等可重复执行，自动完成: Python 3.12 (`/opt/py312`, 无则 uv 在线装) →
-pip 依赖 → librknnrt.so → alsa-utils/gpiod → demo 代码复制到 `/opt/fall_detect_demo`。
+pip 依赖 → PySide6 (Qt 深色界面, 失败自动回退 Tk) → librknnrt.so →
+alsa-utils/gpiod → libxcb-cursor0 (板子 apt 源没有时自动从 Debian 官方池装
+deb) → demo 代码复制到 `/opt/fall_detect_demo`。
 若目录里有离线包 (cpython tarball / wheels_pkgs，用 make_bundle.ps1 制作) 则优先离线安装。
 
-之后:
+之后两种运行方式任选（run.sh 自动定位所在目录，仓库里跑和 /opt 跑等价）:
 
 ```bash
+# 方式 A: 直接在仓库目录运行 (试用/开发)
+cd rk3576-demos/fall_detect_demo
+sudo ./run.sh                   # 带界面 (root 借用桌面用户 XWayland)
+sudo ./run.sh --no-ui           # 无显示器
+
+# 方式 B: /opt 部署目录运行 (正式部署: 固定路径/开机自启场景)
 cd /opt/fall_detect_demo
-sudo ./run.sh                # 带界面 (root 借用桌面用户 XWayland)
-sudo ./run.sh --no-ui        # 无显示器
+sudo ./run.sh
 ```
 
 ### 1. 手动部署 (无网络/定制场景)
@@ -114,13 +121,13 @@ alarm:
 ### 4. 运行
 
 ```bash
-cd fall_detect_demo                  # 部署后为 /opt/fall_detect_demo
-python3 selftest.py                  # 离线逻辑自测 (可选)
-python3 main.py --test-alarm         # 测试 LED+喇叭
-python3 main.py --test-audio         # 观察环境噪声, 标定 abs_threshold_db
+cd fall_detect_demo                  # 仓库 clone 目录或 /opt/fall_detect_demo
+/opt/py312/bin/python3.12 selftest.py    # 离线逻辑自测 (可选)
+/opt/py312/bin/python3.12 main.py --test-alarm    # 测试 LED+喇叭
+/opt/py312/bin/python3.12 main.py --test-audio    # 观察环境噪声, 标定 abs_threshold_db
 sudo ./run.sh                        # 主程序带界面 (LED 权限需 root)
 sudo ./run.sh --no-ui                # 无显示器场景
-# 或直接: sudo python3 main.py [--no-ui]
+# run.sh 内部调用 /opt/py312/bin/python3.12; 直接 python3 main.py 需自备 3.12 环境
 ```
 
 ## 三、功能与配置说明
