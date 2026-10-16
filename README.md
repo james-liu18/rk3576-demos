@@ -1,4 +1,4 @@
-﻿# rk3576-demos — Quectel PI M2 (RK3576) NPU 视觉 Demo 合集
+# rk3576-demos — Quectel PI M2 (RK3576) NPU 视觉 Demo 合集
 
 在 Quectel PI M2 (RK3576, Debian trixie) 上实测通过的两个摄像头 NPU demo。
 
@@ -33,20 +33,33 @@ rk3576-demos/
 
 ## 快速开始（板端在线部署）
 
+前置：板子可联网，USB 摄像头接好，root（或 sudo）终端。首次部署只需一条命令：
+
 ```bash
-sudo apt-get install -y git
 git clone https://github.com/james-liu18/rk3576-demos.git
 cd rk3576-demos
-
-# ---- fall demo: 一键装 Python 环境/依赖/librknnrt + 部署代码 ----
 sudo bash fall_detect_demo/deploy/board_setup.sh
-cd /opt/fall_detect_demo
+# 自动完成: Python 3.12(/opt/py312) + pip 依赖 + PySide6 + librknnrt + 系统工具
+#          (libxcb-cursor0 在 apt 源缺失时自动从 Debian 官方池补装)
+```
+
+**方式 A：直接在仓库目录运行**（试用/开发，run.sh 自动定位所在目录）：
+
+```bash
+cd fall_detect_demo
 sudo python3 selftest.py        # 离线逻辑自测（可选）
 sudo ./run.sh                   # 带界面; 无显示器用 ./run.sh --no-ui
 
-# ---- style cam: 复用 /opt/py312, 无新依赖 ----
-sudo cp -r style_cam_demo /opt/
-cd /opt/style_cam_demo && sudo ./run.sh
+cd ../style_cam_demo            # 复用 /opt/py312, 无新依赖
+sudo ./run.sh
+```
+
+**方式 B：部署到 /opt 运行**（正式部署，开机自启/固定路径场景）。fall demo 已由
+board_setup.sh 自动复制到 /opt；style_cam 需手动复制一次：
+
+```bash
+cd /opt/fall_detect_demo && sudo ./run.sh
+sudo cp -r style_cam_demo /opt/ && cd /opt/style_cam_demo && sudo ./run.sh
 ```
 
 详细说明见各 demo 目录下的 README（中文）/ README_EN（English）：

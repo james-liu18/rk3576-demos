@@ -1,4 +1,4 @@
-﻿# rk3576-demos — NPU Vision Demo Collection for Quectel PI M2 (RK3576)
+# rk3576-demos — NPU Vision Demo Collection for Quectel PI M2 (RK3576)
 
 Two camera-based NPU demos, verified on Quectel PI M2 (RK3576, Debian trixie).
 
@@ -33,20 +33,35 @@ rk3576-demos/
 
 ## Quick Start (On-board, online deployment)
 
+Prerequisites: board has internet, USB camera attached, root (or sudo) shell.
+One command for first-time setup:
+
 ```bash
-sudo apt-get install -y git
 git clone https://github.com/james-liu18/rk3576-demos.git
 cd rk3576-demos
-
-# ---- fall demo: one-shot setup (Python env / deps / librknnrt) + deploy ----
 sudo bash fall_detect_demo/deploy/board_setup.sh
-cd /opt/fall_detect_demo
+# Handles: Python 3.12 (/opt/py312) + pip deps + PySide6 + librknnrt + system tools
+#          (libxcb-cursor0 fetched from the Debian pool when missing from apt sources)
+```
+
+**Option A: run directly from the repo clone** (trial/dev; run.sh locates its own directory):
+
+```bash
+cd fall_detect_demo
 sudo python3 selftest.py        # offline logic self-test (optional)
 sudo ./run.sh                   # with UI; use ./run.sh --no-ui headless
 
-# ---- style cam: reuses /opt/py312, no extra deps ----
-sudo cp -r style_cam_demo /opt/
-cd /opt/style_cam_demo && sudo ./run.sh
+cd ../style_cam_demo            # reuses /opt/py312, no extra deps
+sudo ./run.sh
+```
+
+**Option B: run from /opt** (production: autostart / fixed paths). The fall demo
+is copied to /opt by board_setup.sh automatically; style_cam needs a one-time
+manual copy:
+
+```bash
+cd /opt/fall_detect_demo && sudo ./run.sh
+sudo cp -r style_cam_demo /opt/ && cd /opt/style_cam_demo && sudo ./run.sh
 ```
 
 See each demo's README (Chinese) / README_EN (English) for details:

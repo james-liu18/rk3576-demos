@@ -1,4 +1,4 @@
-﻿# style_cam_demo — Camera Preview + Style Effects + Photo Capture (RK3576)
+# style_cam_demo — Camera Preview + Style Effects + Photo Capture (RK3576)
 
 Second demo built on the fall_detect_demo baseline: USB camera streaming preview,
 real-time style effects, one-key photo capture. **All effects run on the NPU**
@@ -30,7 +30,7 @@ style_cam_demo/
 ├── stylizer.py             # NPU style models + keypoint stickers (all-NPU, no CPU effects)
 ├── ui.py                   # UI: PySide6 dark theme (preferred) / Tk / OpenCV window / headless fallback chain
 ├── config.yaml             # Configuration (camera / effects / saving)
-├── run.sh                  # On-board launcher wrapper (for root desktop sessions)
+├── run.sh                  # On-board launcher wrapper (self-locating, for root desktop sessions)
 ├── selftest.py             # Offline self-test (no camera/board needed)
 ├── models/                 # Pre-converted rknn (fp16, 192x192 input, oil 224)
 │   └── onnx/               # Original onnx, for PC debugging / re-conversion
@@ -45,13 +45,15 @@ style_cam_demo/
 
 ## Usage (on board)
 
-Deploy to /opt/style_cam_demo first (see deployment steps below):
+Set up the environment first (board_setup.sh installs Python/deps/PySide6
+automatically, see deployment below), then run from the repo clone dir or
+/opt/style_cam_demo (run.sh locates its own directory):
 
 ```bash
-cd /opt/style_cam_demo
-./run.sh                     # with UI (effect dropdown, space/button to capture)
-./run.sh --no-ui             # headless
-./run.sh --list-styles       # list available effects
+cd style_cam_demo                # or /opt/style_cam_demo
+sudo ./run.sh                    # with UI (effect dropdown, space/button to capture)
+sudo ./run.sh --no-ui            # headless
+sudo ./run.sh --list-styles      # list available effects
 ```
 
 Capture: click "Capture" or press space in the UI -> full-resolution stylized
@@ -66,38 +68,48 @@ Default `camera.index: 0`. After swapping cameras, confirm the index with
 ## Deployment
 
 Prerequisite: install the Python environment via fall_detect_demo's
-`deploy/board_setup.sh` (/opt/py312 + deps; style_cam adds nothing). Then either:
+`deploy/board_setup.sh` (/opt/py312 + deps + PySide6; style_cam adds nothing):
 
 ```bash
-# A: git clone (board has internet)
 git clone https://github.com/james-liu18/rk3576-demos.git
-sudo cp -r rk3576-demos/style_cam_demo /opt/
-sudo chmod +x /opt/style_cam_demo/run.sh
+cd rk3576-demos
+sudo bash fall_detect_demo/deploy/board_setup.sh
+```
 
-# B: adb push (from Windows)
-adb push style_cam_demo /opt/
-adb shell "chmod +x /opt/style_cam_demo/run.sh"
+Then run directly from the repo dir (run.sh self-locates, no copy/chmod needed):
+
+```bash
+cd style_cam_demo && sudo ./run.sh
+```
+
+For production, copy to /opt (board_setup.sh does not copy style_cam):
+
+```bash
+sudo cp -r style_cam_demo /opt/
+cd /opt/style_cam_demo && sudo ./run.sh
 ```
 
 Verify:
 
 ```bash
-adb shell "cd /opt/style_cam_demo && /opt/py312/bin/python3.12 selftest.py"
+/opt/py312/bin/python3.12 selftest.py
 ```
 
-### PySide6 UI (optional, modern dark theme)
+### PySide6 UI
 
-The default Tk UI is plain; once PySide6 is installed it automatically switches
-to a Qt dark UI (effect grid / capture flash / thumbnails). Falls back to Tk
-when absent, no impact on running:
+board_setup.sh installs PySide6 and libxcb-cursor0 automatically (fetched from
+the Debian pool when the board's apt sources lack the package). Once installed,
+the Qt dark UI (effect grid / capture flash / thumbnails) is used automatically.
+Manual install for reference:
 
 ```bash
-adb shell "apt-get install -y libxcb-cursor0"
-adb shell "/opt/py312/bin/python3.12 -m pip install --no-cache-dir \
-    -i https://pypi.org/simple shiboken6 PySide6_Essentials"
+/opt/py312/bin/python3.12 -m pip install --no-cache-dir \
+    -i https://pypi.org/simple shiboken6 PySide6_Essentials
 ```
 
-run.sh sets `QT_QPA_PLATFORM=xcb` (root borrows the desktop user's XWayland to open windows).
+Falls back to Tk when PySide6 is missing or Qt fails to start, no impact on
+running. run.sh sets `QT_QPA_PLATFORM=xcb` (root borrows the desktop user's
+XWayland to open windows).
 
 ## PC / Build-machine Debugging (no board needed)
 
