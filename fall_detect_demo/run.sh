@@ -6,5 +6,6 @@
 export DISPLAY=:0
 XAUTH=$(ls /run/user/$(id -u q)/.mutter-Xwaylandauth.* 2>/dev/null | head -1)
 [ -n "$XAUTH" ] && export XAUTHORITY="$XAUTH"
-cd /opt/fall_detect_demo
+# 自动定位脚本所在目录 (支持任意位置 git clone 后直接跑)
+cd "$(dirname "$0")"
 exec /opt/py312/bin/python3.12 main.py "$@"

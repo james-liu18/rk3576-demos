@@ -8,5 +8,6 @@ XAUTH=$(ls /run/user/$(id -u q)/.mutter-Xwaylandauth.* 2>/dev/null | head -1)
 [ -n "$XAUTH" ] && export XAUTHORITY="$XAUTH"
 # PySide6 UI 走 XWayland (Wayland 插件在 root 下可能缺库)
 export QT_QPA_PLATFORM=xcb
-cd /opt/style_cam_demo
+# 自动定位脚本所在目录 (支持任意位置 git clone 后直接跑)
+cd "$(dirname "$0")"
 exec /opt/py312/bin/python3.12 main.py "$@"
