@@ -171,7 +171,8 @@ class App:
         os.makedirs(out_dir, exist_ok=True)
         name = os.path.splitext(os.path.basename(img_path))[0]
         for key, label in self.modes:
-            out, ms = self.stylizer.stylize(img, key)
+            # 各模式独立拷贝: 贴纸模式在输入数组上原地作画, 共用会相互叠加
+            out, ms = self.stylizer.stylize(img.copy(), key)
             p = os.path.join(out_dir, f"{name}_{key}.jpg")
             cv2.imwrite(p, out, [cv2.IMWRITE_JPEG_QUALITY, 95])
             print(f"  {label:<16} {ms:6.1f}ms -> {p}")
