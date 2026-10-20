@@ -204,7 +204,59 @@ class QtUI(BaseUI):
 
     def _open_photo(self):
         d = os.path.abspath(getattr(self.app, "save_dir", "."))
-        QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(d))
+        # sudo/root 运行时没有桌面用户的会话环境, QDesktopServices 会静默失败;
+        # 且 gio open 的 D-Bus 激活往返实测有 ~7s 延迟, 故 root 下优先直启文件管理器
+        if os.geteuid() == 0 and self._open_dir_direct(d):
+            return
+        if QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(d)):
+            return
+        if self._open_dir_via_bus(d):
+            return
+        # 兜底: 全部失败时在状态栏显示照片目录路径
+        self.photolb.setText(f"照片目录: {d}")
+
+    @staticmethod
+    def _open_dir_direct(d):
+        # root 下直接以桌面用户身份拉起文件管理器 (绕过 gio/dbus 激活慢路径)
+        import subprocess
+        import glob
+        import pwd
+        import shutil
+        if not shutil.which("nautilus"):
+            return False
+        for rt in sorted(glob.glob("/run/user/[0-9]*")):
+            try:
+                user = pwd.getpwuid(int(os.path.basename(rt))).pw_name
+            except (KeyError, ValueError):
+                continue
+            try:
+                subprocess.Popen(
+                    ["runuser", "-u", user, "--", "env",
+                     "XDG_RUNTIME_DIR=" + rt, "WAYLAND_DISPLAY=wayland-0",
+                     "DBUS_SESSION_BUS_ADDRESS=unix:path=" + rt + "/bus",
+                     "nautilus", "--new-window", d],
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                return True
+            except Exception:
+                continue
+        return False
+
+    @staticmethod
+    def _open_dir_via_bus(d):
+        # 借用桌面用户会话总线兜底 (Popen 非阻塞, 避免卡 UI)
+        import subprocess
+        import glob
+        for bus in sorted(glob.glob("/run/user/*/bus")):
+            try:
+                subprocess.Popen(
+                    ["xdg-open", d],
+                    env=dict(os.environ,
+                             DBUS_SESSION_BUS_ADDRESS="unix:path=" + bus),
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                return True
+            except Exception:
+                pass
+        return False
 
     # ---------------- 主循环 ----------------
     def run(self):
