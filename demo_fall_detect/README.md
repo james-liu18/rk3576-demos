@@ -4,7 +4,7 @@
 触发事件时：LED 闪烁 + 喇叭警笛告警 + 本地保存 10s 音视频录像，带 PySide6 深色 UI。
 
 ```
-fall_detect_demo/
+demo_fall_detect/
 ├── main.py               # 主程序入口
 ├── config.yaml           # 全部配置（摄像头/模型/阈值/LED/录音）
 ├── run.sh                # 板端启动包装 (root 借用桌面用户 XWayland 开窗口)
@@ -52,25 +52,25 @@ python3 tools/convert.py models/yolov8n-pose.onnx rk3576
 
 ```bash
 git clone https://github.com/james-liu18/rk3576-demos.git
-sudo bash rk3576-demos/fall_detect_demo/deploy/board_setup.sh
+sudo bash rk3576-demos/demo_fall_detect/deploy/board_setup.sh
 ```
 
 脚本幂等可重复执行，自动完成: Python 3.12 (`/opt/py312`, 无则 uv 在线装) →
 pip 依赖 → PySide6 (Qt 深色界面, 失败自动回退 Tk) → librknnrt.so →
 alsa-utils/gpiod → libxcb-cursor0 (板子 apt 源没有时自动从 Debian 官方池装
-deb) → demo 代码复制到 `/opt/fall_detect_demo`。
+deb) → demo 代码复制到 `/opt/demo_fall_detect`。
 若目录里有离线包 (cpython tarball / wheels_pkgs，用 make_bundle.ps1 制作) 则优先离线安装。
 
 之后两种运行方式任选（run.sh 自动定位所在目录，仓库里跑和 /opt 跑等价）:
 
 ```bash
 # 方式 A: 直接在仓库目录运行 (试用/开发)
-cd rk3576-demos/fall_detect_demo
+cd rk3576-demos/demo_fall_detect
 sudo ./run.sh                   # 带界面 (root 借用桌面用户 XWayland)
 sudo ./run.sh --no-ui           # 无显示器
 
 # 方式 B: /opt 部署目录运行 (正式部署: 固定路径/开机自启场景)
-cd /opt/fall_detect_demo
+cd /opt/demo_fall_detect
 sudo ./run.sh
 ```
 
@@ -121,7 +121,7 @@ alarm:
 ### 4. 运行
 
 ```bash
-cd fall_detect_demo                  # 仓库 clone 目录或 /opt/fall_detect_demo
+cd demo_fall_detect                  # 仓库 clone 目录或 /opt/demo_fall_detect
 /opt/py312/bin/python3.12 selftest.py    # 离线逻辑自测 (可选)
 /opt/py312/bin/python3.12 main.py --test-alarm    # 测试 LED+喇叭
 /opt/py312/bin/python3.12 main.py --test-audio    # 观察环境噪声, 标定 abs_threshold_db

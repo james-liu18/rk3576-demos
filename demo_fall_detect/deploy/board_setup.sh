@@ -1,5 +1,5 @@
 #!/bin/bash
-# fall_detect_demo 板端安装脚本 (幂等可重复执行)
+# demo_fall_detect 板端安装脚本 (幂等可重复执行)
 # 支持两种部署方式:
 #   A. 在线部署 (推荐, 板子可访问外网): sudo bash board_setup.sh
 #   B. 离线部署: 把 cpython tarball / wheels_pkgs/ / librknnrt.so / demo/ 与
@@ -99,12 +99,12 @@ DEMO_SRC=""
 [ -d "$PKG/demo" ] && DEMO_SRC="$PKG/demo"
 [ -f "$PKG/../main.py" ] && DEMO_SRC="$PKG/.."
 if [ -n "$DEMO_SRC" ]; then
-    mkdir -p /opt/fall_detect_demo
-    cp -r "$DEMO_SRC/." /opt/fall_detect_demo/
-    chmod +x /opt/fall_detect_demo/run.sh
-    rm -rf /opt/fall_detect_demo/__pycache__
-    echo "[deploy] demo 代码已更新到 /opt/fall_detect_demo"
+    mkdir -p /opt/demo_fall_detect
+    cp -r "$DEMO_SRC/." /opt/demo_fall_detect/
+    chmod +x /opt/demo_fall_detect/run.sh
+    rm -rf /opt/demo_fall_detect/__pycache__
+    echo "[deploy] demo 代码已更新到 /opt/demo_fall_detect"
 fi
 
-mkdir -p /opt/fall_detect_demo/records
+mkdir -p /opt/demo_fall_detect/records
 echo "[deploy] 板端安装完成"

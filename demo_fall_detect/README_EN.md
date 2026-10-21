@@ -5,7 +5,7 @@ microphone-based abnormal sound detection. When an event triggers: LED blinking 
 speaker siren + locally saved 10s audio/video recording, with a Tkinter UI.
 
 ```
-fall_detect_demo/
+demo_fall_detect/
 ├── main.py               # Main entry point
 ├── config.yaml           # All configuration (camera/model/thresholds/LED/recording)
 ├── run.sh                # On-board launcher wrapper (root borrows desktop user's XWayland)
@@ -53,19 +53,19 @@ Copy the generated `models/yolo_pose.rknn` to the board.
 
 ```bash
 git clone https://github.com/james-liu18/rk3576-demos.git
-sudo bash rk3576-demos/fall_detect_demo/deploy/board_setup.sh
+sudo bash rk3576-demos/demo_fall_detect/deploy/board_setup.sh
 ```
 
 The script is idempotent and automatically handles: Python 3.12 (`/opt/py312`,
 installed online via uv if missing) → pip dependencies → librknnrt.so →
-alsa-utils/gpiod → demo code copied to `/opt/fall_detect_demo`.
+alsa-utils/gpiod → demo code copied to `/opt/demo_fall_detect`.
 If offline bundle files are present (cpython tarball / wheels_pkgs, built with
 make_bundle.ps1), they are used preferentially.
 
 Then:
 
 ```bash
-cd /opt/fall_detect_demo
+cd /opt/demo_fall_detect
 sudo ./run.sh                # with UI (root borrows desktop user's XWayland)
 sudo ./run.sh --no-ui        # headless
 ```
@@ -117,7 +117,7 @@ Confirm the LED pin manually with `gpioset gpiochip0 <line>=1` before filling in
 ### 4. Run
 
 ```bash
-cd fall_detect_demo                  # /opt/fall_detect_demo after deployment
+cd demo_fall_detect                  # /opt/demo_fall_detect after deployment
 python3 selftest.py                  # offline logic self-test (optional)
 python3 main.py --test-alarm         # test LED + speaker
 python3 main.py --test-audio         # observe ambient noise, calibrate abs_threshold_db

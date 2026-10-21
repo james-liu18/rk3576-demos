@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # AnimeGANv2 系模型: 修正人像模型 + 全部转 rknn (编译机执行)
 set -e
-cd /tmp/style_cam_src
+cd /tmp/style_camera_src
 mkdir -p models models/onnx
 
 # --- 人像动漫模型: JP_face (人像动漫化) -> Disney -> 兜底保留 Hayao_36 ---

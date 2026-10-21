@@ -4,20 +4,20 @@ Two camera-based NPU demos, verified on Quectel PI M2 (RK3576, Debian trixie).
 
 | Demo | Features | NPU workload |
 |------|----------|--------------|
-| [fall_detect_demo](fall_detect_demo/) | Human fall detection + abnormal-sound alarm (LED / siren / event recording) | yolov8n-pose inference (~60 ms/frame) |
-| [style_cam_demo](style_cam_demo/) | Camera preview + real-time style effects + photo capture | 7 style-transfer models + 4 keypoint sticker modes (43~152 ms/frame) |
+| [demo_fall_detect](demo_fall_detect/) | Human fall detection + abnormal-sound alarm (LED / siren / event recording) | yolov8n-pose inference (~60 ms/frame) |
+| [demo_style_camera](demo_style_camera/) | Camera preview + real-time style effects + photo capture | 7 style-transfer models + 4 keypoint sticker modes (43~152 ms/frame) |
 
 ## Repository Layout
 
 ```
 rk3576-demos/
-├── fall_detect_demo/          # Fall detection + sound alarm
+├── demo_fall_detect/          # Fall detection + sound alarm
 │   ├── main.py / *.py         # Main program and modules
 │   ├── models/yolo_pose.rknn  # Pre-converted model (fp16, rk3576)
 │   ├── deploy/                # On-board setup script + NPU runtime
 │   ├── tools/                 # Model export/conversion, debug utilities
 │   └── README.md / README_EN.md
-└── style_cam_demo/            # Style camera
+└── demo_style_camera/            # Style camera
     ├── main.py / *.py         # Main program and modules
     ├── models/*.rknn          # 10 pre-converted models (fp16)
     ├── tools/                 # Model fetch/conversion (incl. graph surgery), board debugging
@@ -39,7 +39,7 @@ One command for first-time setup:
 ```bash
 git clone https://github.com/james-liu18/rk3576-demos.git
 cd rk3576-demos
-sudo bash fall_detect_demo/deploy/board_setup.sh
+sudo bash demo_fall_detect/deploy/board_setup.sh
 # Handles: Python 3.12 (/opt/py312) + pip deps + PySide6 + librknnrt + system tools
 #          (libxcb-cursor0 fetched from the Debian pool when missing from apt sources)
 ```
@@ -47,24 +47,24 @@ sudo bash fall_detect_demo/deploy/board_setup.sh
 **Option A: run directly from the repo clone** (trial/dev; run.sh locates its own directory):
 
 ```bash
-cd fall_detect_demo
+cd demo_fall_detect
 sudo python3 selftest.py        # offline logic self-test (optional)
 sudo ./run.sh                   # with UI; use ./run.sh --no-ui headless
 
-cd ../style_cam_demo            # reuses /opt/py312, no extra deps
+cd ../demo_style_camera            # reuses /opt/py312, no extra deps
 sudo ./run.sh
 ```
 
 **Option B: run from /opt** (production: autostart / fixed paths). The fall demo
-is copied to /opt by board_setup.sh automatically; style_cam needs a one-time
+is copied to /opt by board_setup.sh automatically; style_camera needs a one-time
 manual copy:
 
 ```bash
-cd /opt/fall_detect_demo && sudo ./run.sh
-sudo cp -r style_cam_demo /opt/ && cd /opt/style_cam_demo && sudo ./run.sh
+cd /opt/demo_fall_detect && sudo ./run.sh
+sudo cp -r demo_style_camera /opt/ && cd /opt/demo_style_camera && sudo ./run.sh
 ```
 
 See each demo's README (Chinese) / README_EN (English) for details:
 
-- [fall_detect_demo/README_EN.md](fall_detect_demo/README_EN.md) — configuration & calibration (LED GPIO / audio threshold / camera), model re-conversion, troubleshooting
-- [style_cam_demo/README_EN.md](style_cam_demo/README_EN.md) — effects list & benchmarks, PySide6 UI, model conversion notes (hard-won lessons)
+- [demo_fall_detect/README_EN.md](demo_fall_detect/README_EN.md) — configuration & calibration (LED GPIO / audio threshold / camera), model re-conversion, troubleshooting
+- [demo_style_camera/README_EN.md](demo_style_camera/README_EN.md) — effects list & benchmarks, PySide6 UI, model conversion notes (hard-won lessons)

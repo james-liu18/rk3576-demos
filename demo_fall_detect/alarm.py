@@ -101,13 +101,13 @@ class Led:
         if hasattr(gpiod, "Chip"):  # libgpiod v1 API
             chip = gpiod.Chip(path)
             line = chip.get_line(self.line)
-            line.request(consumer="fall_detect_demo",
+            line.request(consumer="demo_fall_detect",
                          type=gpiod.LINE_REQ_DIR_OUT, default_vals=[0])
             self.dev = ("v1", chip, line)
         else:                       # libgpiod v2 API
             from gpiod.line import Direction, Value
             req = gpiod.request_lines(
-                path, consumer="fall_detect_demo",
+                path, consumer="demo_fall_detect",
                 config={self.line: gpiod.LineSettings(
                     direction=Direction.OUTPUT,
                     output_value=Value.INACTIVE)})

@@ -1,6 +1,6 @@
-# style_cam_demo — Camera Preview + Style Effects + Photo Capture (RK3576)
+# demo_style_camera — Camera Preview + Style Effects + Photo Capture (RK3576)
 
-Second demo built on the fall_detect_demo baseline: USB camera streaming preview,
+Second demo built on the demo_fall_detect baseline: USB camera streaming preview,
 real-time style effects, one-key photo capture. **All effects run on the NPU**
 (style transfer + human keypoint stickers), no CPU filter effects.
 
@@ -19,13 +19,13 @@ real-time style effects, one-key photo capture. **All effects run on the NPU**
 | Clown face | clown | yolo_pose keypoints + wig/eye makeup/red nose/mouth stickers |
 
 Missing models auto-hide their modes without affecting others, so **the board
-needs no extra environment** (reuses fall_detect_demo's /opt/py312 +
+needs no extra environment** (reuses demo_fall_detect's /opt/py312 +
 numpy/opencv/pyyaml/pillow).
 
 ## Directory Structure
 
 ```
-style_cam_demo/
+demo_style_camera/
 ├── main.py                 # Main program (streaming / stylizing / capture threads)
 ├── stylizer.py             # NPU style models + keypoint stickers (all-NPU, no CPU effects)
 ├── ui.py                   # UI: PySide6 dark theme (preferred) / Tk / OpenCV window / headless fallback chain
@@ -47,10 +47,10 @@ style_cam_demo/
 
 Set up the environment first (board_setup.sh installs Python/deps/PySide6
 automatically, see deployment below), then run from the repo clone dir or
-/opt/style_cam_demo (run.sh locates its own directory):
+/opt/demo_style_camera (run.sh locates its own directory):
 
 ```bash
-cd style_cam_demo                # or /opt/style_cam_demo
+cd demo_style_camera                # or /opt/demo_style_camera
 sudo ./run.sh                    # with UI (effect dropdown, space/button to capture)
 sudo ./run.sh --no-ui            # headless
 sudo ./run.sh --list-styles      # list available effects
@@ -67,26 +67,26 @@ Default `camera.index: 0`. After swapping cameras, confirm the index with
 
 ## Deployment
 
-Prerequisite: install the Python environment via fall_detect_demo's
-`deploy/board_setup.sh` (/opt/py312 + deps + PySide6; style_cam adds nothing):
+Prerequisite: install the Python environment via demo_fall_detect's
+`deploy/board_setup.sh` (/opt/py312 + deps + PySide6; style_camera adds nothing):
 
 ```bash
 git clone https://github.com/james-liu18/rk3576-demos.git
 cd rk3576-demos
-sudo bash fall_detect_demo/deploy/board_setup.sh
+sudo bash demo_fall_detect/deploy/board_setup.sh
 ```
 
 Then run directly from the repo dir (run.sh self-locates, no copy/chmod needed):
 
 ```bash
-cd style_cam_demo && sudo ./run.sh
+cd demo_style_camera && sudo ./run.sh
 ```
 
-For production, copy to /opt (board_setup.sh does not copy style_cam):
+For production, copy to /opt (board_setup.sh does not copy style_camera):
 
 ```bash
-sudo cp -r style_cam_demo /opt/
-cd /opt/style_cam_demo && sudo ./run.sh
+sudo cp -r demo_style_camera /opt/
+cd /opt/demo_style_camera && sudo ./run.sh
 ```
 
 Verify:

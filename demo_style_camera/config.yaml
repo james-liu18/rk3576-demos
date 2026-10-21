@@ -26,7 +26,7 @@ style:
   # 归一化 (mean/std) 已写进 rknn, 板端直接喂 RGB uint8
 
 sticker:
-  pose_model: models/yolo_pose.rknn   # 复用 fall_detect_demo 的人体关键点模型 (NPU)
+  pose_model: models/yolo_pose.rknn   # 复用 demo_fall_detect 的人体关键点模型 (NPU)
   assets_dir: assets                  # 透明 PNG 贴纸目录 (狗耳/狗鼻; 猪头代码绘制)
 
 save:

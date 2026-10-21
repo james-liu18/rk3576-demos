@@ -435,7 +435,7 @@ class CvUI(BaseUI):
         super().__init__(state, app)
         self.modes = modes or ["原始"]
         self.window_w = window_w
-        self.win = "style_cam_demo (空格=拍照, s=切换特效, q=退出)"
+        self.win = "demo_style_camera (空格=拍照, s=切换特效, q=退出)"
         cv2.namedWindow(self.win, cv2.WINDOW_NORMAL)
 
     def run(self):

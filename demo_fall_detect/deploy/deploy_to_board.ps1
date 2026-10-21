@@ -1,4 +1,4 @@
-﻿﻿﻿﻿# fall_detect_demo 一键部署脚本 (Windows PC 端)
+﻿﻿﻿# demo_fall_detect 一键部署脚本 (Windows PC 端)
 # 前提: 板子通过 USB 连接本机 (adb 可用); PC 能 ssh 编译机
 # 用法:
 #   powershell -File deploy_to_board.ps1                       # 首次/完整部署
@@ -11,7 +11,7 @@ param(
 )
 $ErrorActionPreference = "Stop"
 $Repo   = $PSScriptRoot          # deploy/ 目录
-$Demo   = Split-Path $Repo       # fall_detect_demo/ 根目录
+$Demo   = Split-Path $Repo       # demo_fall_detect/ 根目录
 $PkgDir = Join-Path $Repo "pkg"  # 本地离线包缓存
 $Plink  = "C:\Program Files\PuTTY\plink.exe"
 $Pscp   = "C:\Program Files\PuTTY\pscp.exe"
@@ -51,20 +51,20 @@ if (-not $SkipDeps) {
 }
 
 Write-Host "=== 5/5 推送 demo 代码/模型 并自测 ==="
-& $Adb shell "mkdir -p /opt/fall_detect_demo"
+& $Adb shell "mkdir -p /opt/demo_fall_detect"
 Push-Location $Demo
 & $Adb push README.md selftest.py main.py pose_detector.py fall_detector.py `
     alarm.py audio_monitor.py event_recorder.py ui.py config.yaml run.sh `
-    /opt/fall_detect_demo/ 2>&1 | Select-Object -Last 1
-& $Adb push models /opt/fall_detect_demo/ 2>&1 | Select-Object -Last 1
-& $Adb push assets /opt/fall_detect_demo/ 2>&1 | Select-Object -Last 1
-& $Adb push tools /opt/fall_detect_demo/ 2>&1 | Select-Object -Last 1
+    /opt/demo_fall_detect/ 2>&1 | Select-Object -Last 1
+& $Adb push models /opt/demo_fall_detect/ 2>&1 | Select-Object -Last 1
+& $Adb push assets /opt/demo_fall_detect/ 2>&1 | Select-Object -Last 1
+& $Adb push tools /opt/demo_fall_detect/ 2>&1 | Select-Object -Last 1
 Pop-Location
-& $Adb shell "chmod +x /opt/fall_detect_demo/run.sh; rm -rf /opt/fall_detect_demo/__pycache__"
-& $Adb shell "cd /opt/fall_detect_demo && /opt/py312/bin/python3.12 selftest.py" | Select-String "FAIL|通过"
+& $Adb shell "chmod +x /opt/demo_fall_detect/run.sh; rm -rf /opt/demo_fall_detect/__pycache__"
+& $Adb shell "cd /opt/demo_fall_detect && /opt/py312/bin/python3.12 selftest.py" | Select-String "FAIL|通过"
 
 Write-Host ""
 Write-Host "部署完成! 板上运行:"
-Write-Host "  cd /opt/fall_detect_demo && ./run.sh            # 带界面"
-Write-Host "  cd /opt/fall_detect_demo && ./run.sh --no-ui    # 无界面"
+Write-Host "  cd /opt/demo_fall_detect && ./run.sh            # 带界面"
+Write-Host "  cd /opt/demo_fall_detect && ./run.sh --no-ui    # 无界面"
 Write-Host "  ./run.sh --test-audio                           # 声音阈值标定"

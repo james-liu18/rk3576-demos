@@ -4,7 +4,7 @@
 # 2.3.2 正常; 板上 librknnrt 2.5.0 向后兼容 2.3.2 产物 (已回归验证)
 # anime 系: fp16, 256x256, mean/std=127.5; oil: imagenet norm; ink: CycleGAN anime norm
 set -e
-cd /tmp/style_cam_src
+cd /tmp/style_camera_src
 
 VENV=/tmp/rknn232venv
 if [ ! -f "$VENV/bin/python3" ]; then

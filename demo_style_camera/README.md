@@ -1,6 +1,6 @@
-# style_cam_demo — 摄像头预览 + 风格化特效 + 拍照存储 (RK3576)
+# demo_style_camera — 摄像头预览 + 风格化特效 + 拍照存储 (RK3576)
 
-基于 fall_detect_demo 基线的第二个 demo：USB 摄像头取流预览，实时风格化特效，
+基于 demo_fall_detect 基线的第二个 demo：USB 摄像头取流预览，实时风格化特效，
 一键拍照保存到本地。**全部特效跑在 NPU 上**（风格迁移 + 人体关键点贴纸），
 无 CPU 滤镜特效。
 
@@ -19,12 +19,12 @@
 | 小丑头 | clown | yolo_pose 关键点 + 假发/眼妆/红鼻/红嘴贴纸 |
 
 模型缺失时对应模式自动隐藏，不影响其他功能，所以**板子不需要任何额外环境**
-（复用 fall_detect_demo 的 /opt/py312 + numpy/opencv/pyyaml/pillow 即可）。
+（复用 demo_fall_detect 的 /opt/py312 + numpy/opencv/pyyaml/pillow 即可）。
 
 ## 目录结构
 
 ```
-style_cam_demo/
+demo_style_camera/
 ├── main.py                 # 主程序 (取流/风格化/拍照线程)
 ├── stylizer.py             # NPU 风格模型 + 关键点贴纸封装 (全 NPU, 无 CPU 特效)
 ├── ui.py                   # UI: PySide6 深色主题 (首选) / Tk / OpenCV 窗口 / 无界面 多级回退
@@ -45,10 +45,10 @@ style_cam_demo/
 ## 使用 (板上)
 
 先按下方部署步骤装好环境（board_setup.sh 会自动装 Python/依赖/PySide6），
-然后在仓库 clone 目录或 /opt/style_cam_demo 运行（run.sh 自动定位所在目录）:
+然后在仓库 clone 目录或 /opt/demo_style_camera 运行（run.sh 自动定位所在目录）:
 
 ```bash
-cd style_cam_demo                # 或 /opt/style_cam_demo
+cd demo_style_camera                # 或 /opt/demo_style_camera
 sudo ./run.sh                    # 带界面 (特效下拉框切换, 空格/按钮拍照)
 sudo ./run.sh --no-ui            # 无界面
 sudo ./run.sh --list-styles      # 列出可用特效
@@ -64,26 +64,26 @@ sudo ./run.sh --list-styles      # 列出可用特效
 
 ## 部署步骤
 
-前置: 先按 fall_detect_demo 的 `deploy/board_setup.sh` 装好 Python 环境
-(/opt/py312 + 依赖 + PySide6, style_cam 无额外依赖)。
+前置: 先按 demo_fall_detect 的 `deploy/board_setup.sh` 装好 Python 环境
+(/opt/py312 + 依赖 + PySide6, style_camera 无额外依赖)。
 
 ```bash
 git clone https://github.com/james-liu18/rk3576-demos.git
 cd rk3576-demos
-sudo bash fall_detect_demo/deploy/board_setup.sh
+sudo bash demo_fall_detect/deploy/board_setup.sh
 ```
 
 然后直接在仓库目录运行（run.sh 自动定位，无需手动复制/chmod）:
 
 ```bash
-cd style_cam_demo && sudo ./run.sh
+cd demo_style_camera && sudo ./run.sh
 ```
 
-正式部署可复制到 /opt（board_setup.sh 不复制 style_cam，手动一下即可）:
+正式部署可复制到 /opt（board_setup.sh 不复制 style_camera，手动一下即可）:
 
 ```bash
-sudo cp -r style_cam_demo /opt/
-cd /opt/style_cam_demo && sudo ./run.sh
+sudo cp -r demo_style_camera /opt/
+cd /opt/demo_style_camera && sudo ./run.sh
 ```
 
 验证:

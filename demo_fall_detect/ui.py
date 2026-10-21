@@ -386,7 +386,7 @@ class CvUI(BaseUI):
     def __init__(self, state, app, window_w=1024):
         super().__init__(state, app)
         self.window_w = window_w
-        self.win = "fall_detect_demo (按 q 退出, a=测试告警, m=静音, r=手动录像)"
+        self.win = "demo_fall_detect (按 q 退出, a=测试告警, m=静音, r=手动录像)"
         cv2.namedWindow(self.win, cv2.WINDOW_NORMAL)
 
     def run(self):
